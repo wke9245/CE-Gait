@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "Please cite the CE-Gait manuscript when using this software."
+title: "CE-Gait: Cumulative-Exposure-Aware Revocable Gait Template Learning with Marginal Linkage Suppression"
+type: software
+version: 0.1.0
+repository-code: "https://github.com/wke9245/CE-Gait"
+authors:
+  - family-names: Wang
+    given-names: Ke
+  - family-names: Huo
+    given-names: Hua
+preferred-citation:
+  type: unpublished
+  title: "CE-Gait: Cumulative-Exposure-Aware Revocable Gait Template Learning with Marginal Linkage Suppression"
+  year: 2026
+  authors:
+    - family-names: Wang
+      given-names: Ke
+    - family-names: Huo
+      given-names: Hua
+  notes: "Submitted to Information Sciences; manuscript ID INS-D-26-12803."

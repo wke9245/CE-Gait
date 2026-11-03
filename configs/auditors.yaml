@@ -1,0 +1,16 @@
+# Independent fits always start from fresh weights.
+architectures: [query, deepsets, transformer]
+knowledge: [secret, disclosed, disclosure_control, auxiliary, auxiliary_control]
+history_lengths: [1, 2, 4]
+extended_lengths: [1, 2, 4, 8]
+renewal_lengths: [1, 2, 4, 6, 8]
+casia_b:
+  ordinary_episodes: 4000
+  enhanced_episodes: 5000
+  auxiliary_positive: 500
+  auxiliary_negative: 500
+gait3d:
+  ordinary_episodes: 12000
+  enhanced_episodes: 14000
+  auxiliary_positive: 1000
+  auxiliary_negative: 1000

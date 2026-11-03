@@ -1,0 +1,40 @@
+dataset: casia_b
+manifest: data/casia_b/manifest.json
+seed: 42
+method: cegait
+device: auto
+threads: 4
+model:
+  bits: 4
+training:
+  steps: 80000
+  warmup_steps: 10000
+  attacker_steps: 2
+  protector_lr: 0.0001
+  attacker_lr: 0.0002
+  min_lr: 0.000001
+  weight_decay: 0.0001
+  episodes: 32
+  utility_identities: 8
+  utility_clips: 4
+  contexts: 4
+  beta: 1.0
+  tau: 0.2
+  lambda_e: 0.5
+  lambda_q: 0.1
+  validate_every: 1000
+protocol:
+  families: [rep, seq, view, cond]
+  lengths: [1, 2, 4]
+auditing:
+  steps: 4000
+  lr: 0.0002
+  batch_size: 32
+  validate_every: 100
+  training_draws: 67
+  training_episodes: 4000
+  evaluation_draws: 20
+  schedules: 10
+  bootstrap_resamples: 1000
+  auxiliary_every: 5
+  auxiliary_pairs: 500
