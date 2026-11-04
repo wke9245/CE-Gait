@@ -1,6 +1,6 @@
 # Checkpoint
 
-The CASIA-B CE-Gait checkpoint at protector iteration 30,000 is distributed through [CE-Gait Release v0.1.0](https://github.com/wke9245/CE-Gait/releases/tag/v0.1.0). The release inherits this repository's private visibility. The serialized weights, optimizer states, iteration counters, and RNG states are preserved in full.
+The CASIA-B CE-Gait checkpoint at protector iteration 30,000 is distributed through the [CE-Gait Release](https://github.com/wke9245/CE-Gait/releases/tag/CE-Gait). The release inherits this repository's private visibility. The serialized weights, optimizer states, iteration counters, and RNG states are preserved in full.
 
 The release contains `best.pt`, `best.json`, and `SHA256SUMS`. Release and asset identifiers, download URLs, and SHA-256 digests are recorded in `release.json`.
 

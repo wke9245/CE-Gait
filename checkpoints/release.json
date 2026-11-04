@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "repository": "wke9245/CE-Gait",
-  "tag": "v0.1.0",
+  "tag": "CE-Gait",
   "release_id": 433452991,
-  "release_url": "https://github.com/wke9245/CE-Gait/releases/tag/v0.1.0",
+  "release_url": "https://github.com/wke9245/CE-Gait/releases/tag/CE-Gait",
   "visibility": "private",
   "assets": [
     {
@@ -11,7 +11,7 @@
       "asset_id": 707977077,
       "size": 37940917,
       "sha256": "6fec75c388e3343e276faded78fbb8a26b743c10c3589cf10f01aaebcbe54933",
-      "download_url": "https://github.com/wke9245/CE-Gait/releases/download/v0.1.0/best.pt",
+      "download_url": "https://github.com/wke9245/CE-Gait/releases/download/CE-Gait/best.pt",
       "api_url": "https://api.github.com/repos/wke9245/CE-Gait/releases/assets/707977077"
     },
     {
@@ -19,7 +19,7 @@
       "asset_id": 707979906,
       "size": 539,
       "sha256": "a4a154fe72b9c45c47aaea69516091f5bf25e20afe0d3f1a0f3e3155a6e215ae",
-      "download_url": "https://github.com/wke9245/CE-Gait/releases/download/v0.1.0/best.json",
+      "download_url": "https://github.com/wke9245/CE-Gait/releases/download/CE-Gait/best.json",
       "api_url": "https://api.github.com/repos/wke9245/CE-Gait/releases/assets/707979906"
     },
     {
@@ -27,7 +27,7 @@
       "asset_id": 707979952,
       "size": 150,
       "sha256": "a6f3e167ea956314da341ad78b73ca4145ef9f533e4e251229da1c5ef23736a1",
-      "download_url": "https://github.com/wke9245/CE-Gait/releases/download/v0.1.0/SHA256SUMS",
+      "download_url": "https://github.com/wke9245/CE-Gait/releases/download/CE-Gait/SHA256SUMS",
       "api_url": "https://api.github.com/repos/wke9245/CE-Gait/releases/assets/707979952"
     }
   ]

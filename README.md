@@ -29,7 +29,7 @@ For CUDA execution, install the PyTorch build appropriate for the available CUDA
 
 ## Checkpoint
 
-The CASIA-B protector checkpoint is distributed through [CE-Gait Releases](https://github.com/wke9245/CE-Gait/releases/tag/v0.1.0), version `v0.1.0`. The release belongs to this private repository and contains `best.pt`, `best.json`, and `SHA256SUMS`. It records protector iteration 30,000, together with the in-loop adversary, optimizer states, and random-number states.
+The CASIA-B protector checkpoint is distributed through the [CE-Gait Release](https://github.com/wke9245/CE-Gait/releases/tag/CE-Gait). The release belongs to this private repository and contains `best.pt`, `best.json`, and `SHA256SUMS`. It records protector iteration 30,000, together with the in-loop adversary, optimizer states, and random-number states.
 
 Authenticate with a GitHub token that has repository read access through `GH_TOKEN`, `GITHUB_TOKEN`, or `--token-file`. The download command checks the release tag and asset identifiers, then verifies each file's SHA-256 digest and byte count.
 
