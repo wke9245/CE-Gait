@@ -50,4 +50,6 @@ An episode manifest records source observation indices, candidate indices, binar
 
 Native checkpoints use `schema_version: 1`. The `kind` field is `ihgr` for encoder checkpoints and `protector` for protected-template models. Training commands save the states needed by their corresponding continuation commands.
 
+`checkpoints/best.pt` contains the CASIA-B protector at saved iteration 30,000. `checkpoints/best.json` records metadata read from that file, including its byte count and SHA-256 digest. The `checkpoint-info` command checks strict model-state compatibility before reporting the metadata. Native checkpoints are loaded with `weights_only=True`.
+
 CE-Gait payloads contain 256 four-bit components packed in component order, with the first component in the high nibble of the first byte. Each payload occupies 128 bytes before metadata. Matching applies normalized cosine distance to dequantized components. The feature-level hashing baselines retain their configured Hamming or index-collision matching rules.

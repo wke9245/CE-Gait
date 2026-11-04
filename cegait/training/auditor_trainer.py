@@ -121,7 +121,7 @@ class AuditorTrainer:
                                 "knowledge": self.knowledge, "step": step + 1, "validation_auc": validation,
                                 "family": self.family, "lengths": self.lengths, "candidate": self.candidate,
                                 "seed": self.seed}, self.output / "auditor.pt")
-        state = torch.load(self.output / "auditor.pt", map_location=self.device, weights_only=False)
+        state = torch.load(self.output / "auditor.pt", map_location=self.device, weights_only=True)
         self.auditor.load_state_dict(state["auditor"])
         self.auditor.eval()
         return self

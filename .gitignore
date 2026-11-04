@@ -10,6 +10,7 @@ outputs/*
 !outputs/.gitkeep
 manifests/*.json
 *.pt
+!checkpoints/best.pt
 *.pth
 *.pkl
 *.npz

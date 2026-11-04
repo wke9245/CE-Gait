@@ -13,7 +13,10 @@ from .evaluation.recognition import evaluate_recognition, candidate_recognition
 
 def obtain_model(store, config, output, device, checkpoint=None):
     if checkpoint:
-        return load_protector(checkpoint, device)[0]
+        model, saved = load_protector(checkpoint, device)
+        if saved["config"]["dataset"] != store.dataset:
+            raise ValueError("The protector checkpoint belongs to another dataset")
+        return model
     method = config.get("method", "cegait")
     model = make_protector(method, **config.get("model", {})).to(device)
     if not any(p.requires_grad for p in model.parameters()):

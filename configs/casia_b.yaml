@@ -1,5 +1,6 @@
 dataset: casia_b
 manifest: data/casia_b/manifest.json
+checkpoint: checkpoints/best.pt
 seed: 42
 method: cegait
 device: auto

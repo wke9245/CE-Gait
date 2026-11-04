@@ -27,6 +27,17 @@ python -m pip install -e . --no-deps
 
 For CUDA execution, install the PyTorch build appropriate for the available CUDA runtime. `--device auto` selects CUDA when available; `--device cpu` selects CPU execution.
 
+## Checkpoint
+
+The CASIA-B protector checkpoint is stored at `checkpoints/best.pt`, with its metadata and checksum in `checkpoints/best.json`. It records protector iteration 30,000, together with the in-loop adversary, optimizer states, and random-number states.
+
+```bash
+python run.py checkpoint-info --checkpoint checkpoints/best.pt
+python run.py audit --config configs/casia_b.yaml --checkpoint checkpoints/best.pt --output outputs/casia_b_audit
+```
+
+CASIA-B auditing and E3--E6 use this checkpoint by default. `--checkpoint` selects another model explicitly. E1, E2, and E7 train their configured variants. IHGR-Net encoder weights are loaded separately for silhouette feature extraction and template issuance.
+
 ## Data preparation
 
 Obtain CASIA-B or Gait3D from the dataset provider and preprocess the silhouette sequences. The indexing command accepts the OpenGait directory layout:
@@ -100,7 +111,7 @@ python run.py train --config configs/casia_b.yaml --seed 2024 --output outputs/c
 python run.py train --config configs/casia_b.yaml --resume outputs/casia_b/last.pt --output outputs/casia_b
 ```
 
-`best.pt` stores the validation-selected model. `last.pt` also stores optimizer states, iteration counters, and random-number states for continuation.
+During training, `best.pt` is saved when the validation objective improves. `last.pt` records the most recent saved iteration. Both files contain optimizer and random-number states for continuation.
 
 ## Experiments
 
@@ -124,7 +135,7 @@ python experiments/e6_cohort_coverage.py --config configs/gait3d.yaml --checkpoi
 python experiments/e7_sensitivity.py --config configs/casia_b.yaml
 ```
 
-E1, E2, and E7 train their respective variants. E3--E6 accept a trained protector through `--checkpoint`; without it, the configured protector is trained first. E3 uses the CASIA-B observation configurations. Each experiment writes its own configuration and result summary under `outputs/`.
+E1, E2, and E7 train their respective variants. E3--E6 use `--checkpoint` or the checkpoint set in the dataset configuration. A protector is trained when neither source is configured. E3 uses the CASIA-B observation configurations. Each experiment writes its own configuration and result summary under `outputs/`.
 
 ## Independent security evaluation
 
@@ -182,6 +193,7 @@ cegait/
   baselines/      Biometric hashing and protected-template controls
   evaluation/     Recognition, linkage, cohort analysis, and BCa statistics
 configs/          Dataset and auditor configurations
+checkpoints/      Protector checkpoint and recorded metadata
 experiments/      E1--E7 entry points
 scripts/          Paired statistical analysis
 ```

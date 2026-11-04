@@ -2,6 +2,7 @@ from pathlib import Path
 import torch
 from torch import nn
 from .ihgr_net import IHGRNet
+from ..checkpoint import read_checkpoint
 
 
 class IHGRAdapter(nn.Module):
@@ -20,9 +21,7 @@ class IHGRAdapter(nn.Module):
         if path.suffix in (".ts", ".torchscript"):
             network = torch.jit.load(str(path), map_location=device)
         else:
-            checkpoint = torch.load(path, map_location=device, weights_only=False)
-            if checkpoint.get("kind") != "ihgr" or checkpoint.get("schema_version") != 1:
-                raise ValueError("Expected a version-1 IHGR checkpoint produced by the pretrain command")
+            checkpoint = read_checkpoint(path, device, "ihgr")
             network = IHGRNet(num_classes=checkpoint.get("num_classes", 74)).to(device)
             network.load_state_dict(checkpoint.get("model", checkpoint), strict=True)
         return cls(network)

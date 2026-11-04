@@ -1,5 +1,6 @@
 """Command-line entry points for CE-Gait training and evaluation."""
 import argparse
+import json
 from pathlib import Path
 from .config import load_config, resolve_path, seed_everything, device_for
 
@@ -14,6 +15,8 @@ def positive_integer(value):
 def main(argv=None):
     parser = argparse.ArgumentParser(description="CE-Gait: training, protected-template issuance, and security evaluation")
     sub = parser.add_subparsers(dest="command", required=True)
+    info = sub.add_parser("checkpoint-info", help="Inspect checkpoint metadata and parameter compatibility")
+    info.add_argument("--checkpoint", default="checkpoints/best.pt")
     prepare = sub.add_parser("prepare", help="Index preprocessed silhouette sequences")
     prepare.add_argument("--root", required=True)
     prepare.add_argument("--dataset", choices=["casia_b", "gait3d"], required=True)
@@ -65,7 +68,11 @@ def main(argv=None):
     initial_seed = getattr(args, "seed", None)
     seed_everything(42 if initial_seed is None else initial_seed)
     device = device_for(getattr(args, "device", None) or "auto")
-    if args.command == "prepare":
+    if args.command == "checkpoint-info":
+        from .checkpoint import checkpoint_summary
+        print(json.dumps(checkpoint_summary(resolve_path(args.checkpoint)), indent=2))
+        return
+    elif args.command == "prepare":
         from .data import build_sequence_manifest
         result = build_sequence_manifest(args.root, args.dataset, resolve_path(args.output), args.partition)
     elif args.command == "pretrain":
@@ -123,8 +130,9 @@ def main(argv=None):
             from .baselines import make_protector
             from .training.alternate_trainer import load_protector
             from .experiments import audit_case
-            if args.checkpoint:
-                model, saved = load_protector(resolve_path(args.checkpoint), device)
+            selected_checkpoint = args.checkpoint or (config.get("checkpoint") if config.get("method", "cegait") == "cegait" else None)
+            if selected_checkpoint:
+                model, saved = load_protector(resolve_path(selected_checkpoint), device)
                 if saved["config"]["dataset"] != store.dataset:
                     parser.error("The protector checkpoint belongs to another dataset")
             else:
@@ -139,6 +147,9 @@ def main(argv=None):
             from .experiments import run_experiment
             if args.checkpoint and args.name in {"e1", "e2", "e7"}:
                 parser.error("E1, E2, and E7 train their own variants; --checkpoint applies to E3--E6")
+            selected_checkpoint = args.checkpoint
+            if selected_checkpoint is None and args.name in {"e3", "e4", "e5", "e6"} and config.get("method", "cegait") == "cegait":
+                selected_checkpoint = config.get("checkpoint")
             result = run_experiment(args.name, store, config, output, device,
-                                    resolve_path(args.checkpoint) if args.checkpoint else None)
+                                    resolve_path(selected_checkpoint) if selected_checkpoint else None)
     print(f"Saved: {result}" if isinstance(result, (Path, str)) else "Completed.")

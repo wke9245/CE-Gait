@@ -6,3 +6,5 @@
 *.toml text eol=lf
 *.json text eol=lf
 *.cff text eol=lf
+*.pt binary
+*.pth binary

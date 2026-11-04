@@ -14,12 +14,11 @@ from ..losses.exposure_group_risk import exposure_group_risk
 from ..protocols.domain_key_schedule import DomainKeySchedule
 from ..protocols.history_episode_builder import HistoryEpisodeBuilder, encode_episodes
 from ..data import write_json
+from ..checkpoint import read_checkpoint
 
 
 def load_protector(checkpoint, device="cpu"):
-    saved = torch.load(checkpoint, map_location=device, weights_only=False)
-    if saved.get("kind") != "protector" or saved.get("schema_version") != 1:
-        raise ValueError("Expected a version-1 protector checkpoint produced by the train command")
+    saved = read_checkpoint(checkpoint, device, "protector")
     model = make_protector(saved.get("method", "cegait"), **saved.get("model_options", {})).to(device)
     model.load_state_dict(saved["protector"], strict=True)
     return model.eval(), saved
@@ -167,9 +166,7 @@ class AlternateTrainer:
                     "manifest_sha256": hashlib.sha256(self.store.path.read_bytes()).hexdigest()}, self.output / name)
 
     def resume(self, path):
-        saved = torch.load(path, map_location=self.device, weights_only=False)
-        if saved.get("kind") != "protector" or saved.get("schema_version") != 1:
-            raise ValueError("Expected a version-1 protector checkpoint")
+        saved = read_checkpoint(path, self.device, "protector")
         if saved["manifest_sha256"] != hashlib.sha256(self.store.path.read_bytes()).hexdigest():
             raise ValueError("Cannot resume with a different feature manifest")
         self.protector.load_state_dict(saved["protector"])

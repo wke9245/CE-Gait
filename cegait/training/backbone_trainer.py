@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from ..backbone import IHGRNet, IHGRAdapter
 from ..data import read_json, write_json, load_sequence
+from ..checkpoint import read_checkpoint
 
 
 def sequence_path(manifest_path, record):
@@ -27,7 +28,7 @@ def pretrain_backbone(manifest_path, output, steps=80000, device="cpu", seed=42,
     rng = np.random.default_rng(seed)
     start = 0
     if resume:
-        saved = torch.load(resume, map_location=device, weights_only=False)
+        saved = read_checkpoint(resume, device, "ihgr")
         if saved["identity_mapping"] != mapping:
             raise ValueError("Checkpoint identity mapping differs from this manifest")
         model.load_state_dict(saved["model"])
