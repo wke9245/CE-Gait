@@ -11,6 +11,8 @@ outputs/*
 manifests/*.json
 *.pt
 *.pth
+checkpoints/best.json
+checkpoints/SHA256SUMS
 *.pkl
 *.npz
 *.npy

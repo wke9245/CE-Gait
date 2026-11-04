@@ -1,9 +1,8 @@
 name: cegait
 channels:
-  - pytorch
   - conda-forge
 dependencies:
-  - python=3.10
+  - python=3.15
   - pip
   - pip:
       - -r requirements.txt
