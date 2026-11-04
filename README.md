@@ -6,8 +6,6 @@ CE-Gait is a research implementation accompanying our manuscript submitted to *I
 
 The project includes the IHGR-Net feature extraction interface, key-conditioned template protection, marginal linkage suppression, exposure-group optimization, independent linkage auditing, and experimental procedures for CASIA-B and Gait3D.
 
-The implementation is provided for academic inspection during manuscript review. The original research software and associated materials remain subject to the copyright and access conditions specified in this repository.
-
 ## Manuscript
 
 **Journal:** Information Sciences. **Manuscript ID:** INS-D-26-12803. **Status:** Under review.
@@ -74,7 +72,7 @@ Data conventions are described in [DATA_FORMAT.md](DATA_FORMAT.md).
 
 ## Checkpoints
 
-Model checkpoints and supporting metadata are maintained separately from the source code in [CE-Gait Releases](https://github.com/wke9245/CE-Gait/releases/tag/CE-Gait). Access to the associated research assets is managed by the authors during manuscript review. Authorized users can retrieve the assets with `scripts/download_checkpoint.py`.
+Model checkpoints and supporting metadata are provided in [CE-Gait Releases](https://github.com/wke9245/CE-Gait/releases/tag/CE-Gait). Download `best.pt`, `best.json`, and `SHA256SUMS` from the release page, or retrieve them with `scripts/download_checkpoint.py`.
 
 ## References and rights
 
