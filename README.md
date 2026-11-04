@@ -29,12 +29,17 @@ For CUDA execution, install the PyTorch build appropriate for the available CUDA
 
 ## Checkpoint
 
-The CASIA-B protector checkpoint is stored at `checkpoints/best.pt`, with its metadata and checksum in `checkpoints/best.json`. It records protector iteration 30,000, together with the in-loop adversary, optimizer states, and random-number states.
+The CASIA-B protector checkpoint is distributed through [GitHub Packages](https://github.com/users/wke9245/packages/container/package/ce-gait-checkpoint), version `casia-b-step30000`. The private package is linked to this repository and contains `best.pt` and `best.json`. It records protector iteration 30,000, together with the in-loop adversary, optimizer states, and random-number states.
+
+Authenticate with a GitHub token that has package read access through `GH_TOKEN`, `GITHUB_TOKEN`, or `--token-file`. The download command retrieves the pinned package manifest and verifies each file's SHA-256 digest and byte count.
 
 ```bash
+python scripts/download_checkpoint.py
 python run.py checkpoint-info --checkpoint checkpoints/best.pt
 python run.py audit --config configs/casia_b.yaml --checkpoint checkpoints/best.pt --output outputs/casia_b_audit
 ```
+
+The registry reference is `ghcr.io/wke9245/ce-gait-checkpoint:casia-b-step30000`. `checkpoints/package.json` records the immutable manifest digest. Checkpoint binaries are downloaded locally and excluded from source control.
 
 CASIA-B auditing and E3--E6 use this checkpoint by default. `--checkpoint` selects another model explicitly. E1, E2, and E7 train their configured variants. IHGR-Net encoder weights are loaded separately for silhouette feature extraction and template issuance.
 
@@ -193,9 +198,9 @@ cegait/
   baselines/      Biometric hashing and protected-template controls
   evaluation/     Recognition, linkage, cohort analysis, and BCa statistics
 configs/          Dataset and auditor configurations
-checkpoints/      Protector checkpoint and recorded metadata
+checkpoints/      Package reference and checkpoint metadata
 experiments/      E1--E7 entry points
-scripts/          Paired statistical analysis
+scripts/          Checkpoint download and paired statistical analysis
 ```
 
 Data formats are specified in [DATA_FORMAT.md](DATA_FORMAT.md). References are listed in [REFERENCES.md](REFERENCES.md).
