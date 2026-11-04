@@ -50,7 +50,7 @@ An episode manifest records source observation indices, candidate indices, binar
 
 Native checkpoints use `schema_version: 1`. The `kind` field is `ihgr` for encoder checkpoints and `protector` for protected-template models. Training commands save the states needed by their corresponding continuation commands.
 
-The private GitHub Packages artifact `ce-gait-checkpoint:casia-b-step30000` contains the CASIA-B protector at saved iteration 30,000. `scripts/download_checkpoint.py` retrieves `best.pt` and `best.json` to `checkpoints/`, using the immutable manifest digest recorded in `checkpoints/package.json`. The metadata records the checkpoint byte count and SHA-256 digest. Root `SHA256SUMS` covers version-controlled source and metadata files; checkpoint binary integrity is checked against its package digest.
+CE-Gait Release `v0.1.0` contains the CASIA-B protector at saved iteration 30,000. `scripts/download_checkpoint.py` retrieves the release assets `best.pt`, `best.json`, and `SHA256SUMS` to `checkpoints/`, using the tag and asset identifiers recorded in `checkpoints/release.json`. The metadata records each asset's byte count and SHA-256 digest. Root `SHA256SUMS` covers version-controlled source and metadata files; checkpoint binary integrity is checked against its release asset digest.
 
 The `checkpoint-info` command checks strict model-state compatibility before reporting metadata. Native checkpoints are loaded with `weights_only=True`.
 

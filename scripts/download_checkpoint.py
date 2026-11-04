@@ -1,6 +1,5 @@
-"""Download the versioned CE-Gait checkpoint from GitHub Packages."""
+"""Download the versioned CE-Gait checkpoint from GitHub Releases."""
 import argparse
-import base64
 import hashlib
 import json
 import os
@@ -34,7 +33,7 @@ def open_url(url, headers=None):
             target = urllib.parse.urljoin(url, error.headers["Location"])
             parsed = urllib.parse.urlsplit(target)
             if parsed.scheme != "https":
-                raise ValueError("The registry returned a non-HTTPS download endpoint")
+                raise ValueError("The release returned a non-HTTPS download endpoint")
             if parsed.netloc != urllib.parse.urlsplit(url).netloc:
                 headers.pop("Authorization", None)
             url = target
@@ -91,47 +90,38 @@ def main():
     else:
         token = (os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or "").strip()
     if not token:
-        parser.error("Set GH_TOKEN or GITHUB_TOKEN to an access token with package read access, or provide --token-file")
-    package = json.loads((ROOT / "checkpoints/package.json").read_text(encoding="utf-8"))
-    if package["registry"] != "ghcr.io":
-        raise ValueError("Unsupported package registry")
-    account = read_json("https://api.github.com/user", {"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "User-Agent": "CEGait-Checkpoint-Download"})
-    name = package["namespace"] + "/" + package["name"]
-    basic = base64.b64encode((account["login"] + ":" + token).encode()).decode("ascii")
-    query = urllib.parse.urlencode({"service": "ghcr.io", "scope": "repository:" + name + ":pull"})
-    grant = read_json("https://ghcr.io/token?" + query, {"Authorization": "Basic " + basic})
-    registry_token = grant.get("token") or grant["access_token"]
-    headers = {"Authorization": "Bearer " + registry_token, "User-Agent": "CEGait-Checkpoint-Download"}
-    manifest_url = "https://ghcr.io/v2/" + name + "/manifests/" + package["digest"]
-    with open_url(manifest_url, {**headers, "Accept": "application/vnd.oci.image.manifest.v1+json"}) as response:
-        body = response.read()
-    if "sha256:" + hashlib.sha256(body).hexdigest() != package["digest"]:
-        raise ValueError("Package manifest digest does not match the pinned version")
-    manifest = json.loads(body)
-    expected = {item["name"]: item for item in package["files"]}
-    if set(expected) != {"best.pt", "best.json"}:
-        raise ValueError("Unexpected checkpoint package file list")
-    actual = {}
-    for layer in manifest["layers"]:
-        filename = layer.get("annotations", {}).get("org.opencontainers.image.title")
-        if filename not in expected or filename in actual:
-            raise ValueError("Unexpected file in the checkpoint package")
-        if layer["digest"] != expected[filename]["digest"] or layer["size"] != expected[filename]["size"]:
-            raise ValueError("Package file metadata does not match: " + filename)
-        actual[filename] = layer
-    if set(actual) != set(expected):
-        raise ValueError("Checkpoint package is incomplete")
+        parser.error("Set GH_TOKEN or GITHUB_TOKEN to an access token with repository read access, or provide --token-file")
+    release = json.loads((ROOT / "checkpoints/release.json").read_text(encoding="utf-8"))
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", release["repository"]):
+        raise ValueError("Invalid release repository")
+    base = "https://api.github.com/repos/" + release["repository"]
+    headers = {"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "CEGait-Checkpoint-Download"}
+    remote = read_json(base + "/releases/" + str(release["release_id"]), headers)
+    if remote["tag_name"] != release["tag"]:
+        raise ValueError("Release tag does not match the pinned version")
+    expected = {item["name"]: item for item in release["assets"]}
+    if set(expected) != {"best.pt", "best.json", "SHA256SUMS"}:
+        raise ValueError("Unexpected checkpoint release file list")
+    actual = {item["id"]: item for item in remote["assets"]}
+    for filename, item in expected.items():
+        asset = actual.get(item["asset_id"])
+        if asset is None or asset["name"] != filename or asset["size"] != item["size"] or asset["state"] != "uploaded":
+            raise ValueError("Release file metadata does not match: " + filename)
+        if not re.fullmatch(r"[0-9a-f]{64}", item["sha256"]):
+            raise ValueError("Invalid release file checksum")
+        if asset.get("digest") and asset["digest"] != "sha256:" + item["sha256"]:
+            raise ValueError("Release asset digest does not match: " + filename)
     args.output.mkdir(parents=True, exist_ok=True)
-    for filename, layer in actual.items():
+    for filename, item in expected.items():
         print("Retrieving " + filename, flush=True)
-        download("https://ghcr.io/v2/" + name + "/blobs/" + layer["digest"], args.output / filename, layer["digest"], layer["size"], headers)
-    print("Checkpoint package verified at " + str(args.output.resolve()), flush=True)
+        download(base + "/releases/assets/" + str(item["asset_id"]), args.output / filename, "sha256:" + item["sha256"], item["size"], {**headers, "Accept": "application/octet-stream"})
+    print("Checkpoint release verified at " + str(args.output.resolve()), flush=True)
 
 
 if __name__ == "__main__":
     try:
         main()
     except urllib.error.HTTPError as error:
-        raise SystemExit("GitHub Packages request failed (HTTP " + str(error.code) + ")")
+        raise SystemExit("GitHub Releases request failed (HTTP " + str(error.code) + ")")
     except (OSError, ValueError, KeyError) as error:
         raise SystemExit("Checkpoint download failed: " + str(error))
